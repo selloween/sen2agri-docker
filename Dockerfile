@@ -11,11 +11,11 @@ RUN wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/Sen2A
     && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/swbd.zip \
     && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/Sen2Agri-VisualizationTool-2.0.zip
 
-## Downlad MACCS 5.1.5 and MAJA V 3.3.0
+## Downlad MACCS 5.1.5 and MAJA V 3.2.2 TM
 # MACCS
 # RUN wget https://logiciels.cnes.fr/en/license/60/362 \
 # MAJA
-RUN wget https://logiciels.cnes.fr/en/license/58/438 
+RUN wget https://logiciels.cnes.fr/en/license/58/421
 
 
 # TODO Xserver for Sen2Agri Configurator
