@@ -1,4 +1,6 @@
-*.zip
-*.swp
-*.pdf
+.env
 .vscode
+.DS_Store
+software
+datasets
+*.swp

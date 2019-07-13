@@ -1,23 +1,50 @@
-FROM centos7:latest
+FROM centos/systemd
 
-RUN yum update \
-    && yum install wget unzip
+RUN yum update -y \
+    && yum install -y epel-release \
+    && yum --enablerepo=epel install -y p7zip unzip file expect
 
-RUN mkdir /tmp/software
-WORKDIR /tmp/software
+RUN useradd -m sen2agri-service \
+    && usermod -aG sen2agri-service sen2agri-service \
+    && useradd apache \
+    && usermod -aG sen2agri-service apache
 
-## Copy MAJA V 3.2.2 TM
-COPY ./Maja_3.2.2_TM.zip .
+RUN mkdir -p /mnt/archives/srtm \
+    && mkdir -p /mnt/archive/swbd \
+    && mkdir /mnt/upload \
+    && mkdir /mnt/archive/gipp_maja
 
-## Download installation package
-#http://www.esa-sen2agri.org/operational-system/software-download/
-RUN wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/Sen2Agri-package-2.0.1.zip \
-    && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/Sen2Agri-gipp-maja-3.2.2.zip \
-    && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/srtm.zip \
-    && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/swbd.zip \
-    && wget http://www.esa-sen2agri.org/wp-content/uploads/resources/software/Sen2Agri-VisualizationTool-2.0.zip
+VOLUME datasets/srtm /mnt/archive/srtm
+VOLUME datasets/swbd /mnt/archive/swbd
 
-RUN unzip ./*.zip
+RUN chown -R apache:sen2agri-service /mnt/upload
+RUN chown -R sen2agri-service:sen2agri-service /mnt/archive
 
+WORKDIR /home/sen2agri-service
 
-# TODO Xserver for Sen2Agri Configurator
+COPY ./software .
+
+RUN mv Sen2Agri-gipp-maja-3.2.2.zip /mnt/archive/gipp_maja \
+    && 7za x /mnt/archive/gipp_maja/Sen2Agri-gipp-maja-3.2.2.zip
+
+RUN 7za x Maja_3.2.2_TM.zip \
+    && 7za x Sen2Agri-package-2.0.1.zip
+
+WORKDIR /home/sen2agri-service/Maja-3.2.2-TM
+
+RUN chmod +x MAJA-3.2.2_TM.run \
+    && ./MAJA-3.2.2_TM.run
+
+WORKDIR /home/sen2agri-service/Sen2AgriDistribution/install_script
+
+ADD install.exp .
+
+RUN chmod +x sen2agriPlatformInstallAndConfig.sh \
+    && chmod +x install.exp \
+    && ./install.exp
+
+## TODO Cleanup
+
+EXPOSE 80
+
+CMD ["/usr/sbin/init"]

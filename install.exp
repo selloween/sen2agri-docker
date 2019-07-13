@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+set timeout -1
+spawn "./sen2agriPlatformInstallAndConfig.sh"
+expect "What L1C processor should be used? (1 for MACCS / 2 for MAJA)" { send "2\n" }
+expect eof
