@@ -36,14 +36,11 @@ RUN chmod +x MAJA-3.2.2_TM.run \
     && ./MAJA-3.2.2_TM.run
 
 WORKDIR /home/sen2agri-service/Sen2AgriDistribution/install_script
-
-ADD install.exp .
+COPY install.exp .
 
 RUN chmod +x sen2agriPlatformInstallAndConfig.sh \
     && chmod +x install.exp \
     && ./install.exp
-
-## TODO Cleanup
 
 EXPOSE 80
 
